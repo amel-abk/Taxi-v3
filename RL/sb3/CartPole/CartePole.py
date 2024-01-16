@@ -7,7 +7,7 @@ env = gym.make('CartPole-v1')
 
 # Créer et entrainer le modèle PPO
 model = PPO("MlpPolicy", env, verbose=1)
-model.learn(total_timesteps=10000)
+model.learn(total_timesteps=250000)
 
 # Sauvegarder le modèle
 model.save("ppo_cartpole")
@@ -15,20 +15,11 @@ model.save("ppo_cartpole")
 # Charger le modèle
 loaded_model = PPO.load("ppo_cartpole")
 
-for i in range(10):
-    obs, _ = env.reset()
-    total_reward = 0
+# Evaluate the trained model
+num_eval_episodes = 10
+mean_reward, std_reward = evaluate_policy(loaded_model, env, n_eval_episodes=num_eval_episodes, deterministic=True)
 
-    while True:
-        action, _ = loaded_model.predict(obs)
-        print(f'Episode {i} Action: {action}')
-        obs, reward, done, _, _ = env.step(int(action))
-        total_reward += reward
-
-        if done:
-            print(f'Episode {i} Reward: {total_reward}')
-            break
-
+print(f"mean_reward={mean_reward}")
 
 # Fermer l'environnement
 env.close()
