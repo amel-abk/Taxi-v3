@@ -42,8 +42,8 @@ class WaterColorPuzzleEnv(gym.Env):
         # Check if it is possible to pour from the source vial to the destination vial
         if self._can_pour_from_vial(source_vial) and self._can_pour_to_vial(destination_vial):
             # Perform the pouring action
-            obseravtion , reward= self._pour_color_action(source_vial, destination_vial)
-            print('observation_from_step', obseravtion)
+            observation , reward= self._pour_color_action(source_vial, destination_vial)
+            print('observation_from_step', observation)
 
             # Calculate the reward 
             self.total_reward += reward
@@ -51,6 +51,9 @@ class WaterColorPuzzleEnv(gym.Env):
             # Check if the game is over
             done = self._check_game_over()
             
+            # Update the state
+            self.state = observation
+
 
         else:
             print("Invalid source or destination vial index:", source_vial, destination_vial)
@@ -65,7 +68,7 @@ class WaterColorPuzzleEnv(gym.Env):
             done = True
 
         # Return the necessary information to the agent
-        return observation, self.total_reward, done, {}
+        return self.state, self.total_reward, done, {}
 
 
     def reset(self):
